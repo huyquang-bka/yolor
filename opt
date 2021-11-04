@@ -1,0 +1,2 @@
+agnostic_nms=False, augment=False, cfg='cfg/yolor_p6.cfg', classes=None, conf_thres=0.25, device='0', img_size=1280, iou_thres=0.5, names='data/coco.names', output='inference/output', save_txt=False, source='inference/images/C9.jpg', update=False, view_im
+g=False, weights=['yolor_p6.pt']
