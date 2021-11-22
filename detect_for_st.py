@@ -19,7 +19,7 @@ out, source, weights, view_img, save_txt, imgsz, cfg, names = \
     opt.output, opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, opt.cfg, opt.names
 
 # Initialize
-device = select_device(opt.device)
+device = select_device("cpu")
 half = device.type != 'cpu'  # half precision only supported on CUDA
 
 # Load model
@@ -41,7 +41,8 @@ colors = (0, 0, 255)
 # _ = model(img.half() if half else img) if device.type != 'cpu' else None  # run once
 
 
-def detect(img0):
+def detect(frame, allow_class, conf_thres):
+    img0 = frame
     H, W, _ = img0.shape
     img = letterbox(img0, new_shape=imgsz, auto_size=64)[0]
 
@@ -58,7 +59,7 @@ def detect(img0):
     pred = model(img, augment=opt.augment)[0]
 
     # Apply NMS
-    pred = non_max_suppression(pred, opt.conf_thres, opt.iou_thres, classes=opt.classes, agnostic=opt.agnostic_nms)
+    pred = non_max_suppression(pred, conf_thres, opt.iou_thres, classes=allow_class, agnostic=opt.agnostic_nms)
 
     # Process detections
     for i, det in enumerate(pred):  # detections per image
@@ -75,17 +76,16 @@ def detect(img0):
                 x1, y1, x2, y2 = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
                 cv2.rectangle(im0, (x1, y1), (x2, y2), colors, 2)
                 cv2.putText(im0, label, (x1, y1 - 10), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 0, 255), 2)
-
-        try:
-            return im0
-        except:
-            return img0
+    try:
+        return im0
+    except:
+        return img0
 
 
 if __name__ == '__main__':
-    path = r"inference/images/C9.jpg"
-    img0 = cv2.imread(path)
+    img = cv2.imread("inference/images/C9.jpg")
+
     with torch.no_grad():
-        img = detect(img0)
+        img = detect(img, [2, 5, 7], 0.25)
         cv2.imshow("Image", img)
         cv2.waitKey()
