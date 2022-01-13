@@ -1,11 +1,11 @@
 agnostic_nms = False
 augment = False
 cfg = 'cfg/yolor_p6.cfg'
-classes = [2, 5, 7]
-conf_thres = 0.1
+classes = [2]
+conf_thres = 0.2
 device = '0'
 img_size = 1280
-iou_thres = 0.5
+iou_thres = 0.3
 names = 'data/coco.names'
 output = 'inference/output'
 save_txt = False
